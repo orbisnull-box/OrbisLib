@@ -12,6 +12,13 @@ abstract class Orbislib_Abstract_ModelMapper
             $this->setDbTable($dbTable);
         }
     }
+    
+    /**
+     * return default name db table for this mapper
+     * @return string 
+     */
+    abstract public function getDbTableDefault();
+            
 
     public function setDbTable($dbTable)
     {
@@ -29,7 +36,7 @@ abstract class Orbislib_Abstract_ModelMapper
     public function getDbTable()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable("Application_Model_DbTable_Entry");
+            $this->setDbTable($this->getDbTableDefault());
         }
         return $this->_dbTable;
     }

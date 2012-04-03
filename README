@@ -1,2 +1,3 @@
 Library fo simle crud operations based on ZendFramework.
 It's separated from the project slog https://github.com/orbisnull/slog
+And It use some ideas from  ABS Library https://bitbucket.org/orbisnull/abs-library
