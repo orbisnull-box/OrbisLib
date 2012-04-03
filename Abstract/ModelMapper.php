@@ -41,7 +41,7 @@ abstract class Orbislib_Abstract_ModelMapper
         return $this->_dbTable;
     }
     
-    public function find($id, Application_Model_Abstract_Model $entry)
+    public function find($id, OrbisLib_Abstract_Model $entry)
     {
         $result = $this->getDbTable()->find($id);
         if (count($result) === 0) {
@@ -53,7 +53,7 @@ abstract class Orbislib_Abstract_ModelMapper
         }
     }
     
-    public function save(Application_Model_Abstract_Model $entry)
+    public function save(OrbisLib_Abstract_Model $entry)
     {
         $data=$entry->toArray();
         $id = $entry->getId();
@@ -68,8 +68,8 @@ abstract class Orbislib_Abstract_ModelMapper
     
     public function fetchAll($classOfEntrys)
     {
-        if (!is_subclass_of($classOfEntrys, "OrbisLib_Abstract_ModelAbstract")) {
-            //throw new UnexpectedValueException("Invalid class given");
+        if (!is_subclass_of($classOfEntrys, "OrbisLib_Abstract_Model")) {
+            throw new UnexpectedValueException("Invalid class given");
         }
         $resultSet = $this->getDbTable()->fetchAll();
         $entries   = array();
@@ -81,7 +81,7 @@ abstract class Orbislib_Abstract_ModelMapper
         return $entries;
     }
 
-    public function delete(Application_Mode_Types $entry)
+    public function delete(OrbisLib_Abstract_Model $entry)
     {
         $where = $this->getDbTable()->getAdapter()->quoteInto("id = ?", $entry->id);
         return $this->getDbTable()->delete($where);
