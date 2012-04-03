@@ -37,9 +37,14 @@ abstract class OrbisLib_Abstract_Model
         return $this->$method();
     }
     
+    public function getClass()
+    {
+        return get_class($this);
+    }
+
     public function toArray()
     {
-        $vars=get_class_vars(__CLASS__);
+        $vars=get_class_vars($this->getClass());
         $data=array();
         foreach ($vars as $key=>$value) {
             $name = substr($key,1);
