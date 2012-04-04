@@ -158,4 +158,14 @@ abstract class OrbisLib_Abstract_Model
         }
         return $vars;
     }
+    
+    public function filterDateTime($value)
+    {
+        if (is_string($value)) {
+            $value = new DateTime($value);
+        } elseif (!is_null ($value) and !($value instanceof DateTime)) {
+            throw new UnexpectedValueException("Invalid type given for convert to DataTime");            
+        }
+        return $value;
+    }
 }
