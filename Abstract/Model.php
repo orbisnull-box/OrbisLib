@@ -156,5 +156,6 @@ abstract class OrbisLib_Abstract_Model
                 }                
             }
         }
+        return $vars;
     }
 }
