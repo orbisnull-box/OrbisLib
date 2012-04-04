@@ -61,7 +61,7 @@ abstract class Orbislib_Abstract_ModelMapper
     public function save(OrbisLib_Abstract_Model $entry)
     {
         $data =  $this->prepareToSave($entry);
-        $id = $entry->getId();
+        $id = $entry->id;
         if ($id === 0) {
             unset($data["id"]);
             return $this->getDbTable()->insert($data);
