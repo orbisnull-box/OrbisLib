@@ -55,6 +55,20 @@ abstract class OrbisLib_Abstract_Model
         }
         return $data;
     }
-
-
+    
+    public function toArrayStr() {
+        $vars = $this->toArray();
+        foreach ($vars as $name=>$value) {
+            if (is_object($value)) {
+                $method = "get" . ucfirst($name)."ToString";
+                if (method_exists($this, "toString")){
+                    $vars[$name] = $this->$method;                                       
+                } elseif (method_exists($value, "toString")) {                
+                     $vars[$name] = $value->toString();                    
+                } else {
+                    $vars[$name] = "Object ".get_class($value);                    
+                }                
+            }
+        }
+    }
 }

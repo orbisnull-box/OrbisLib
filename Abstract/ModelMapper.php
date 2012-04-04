@@ -53,15 +53,20 @@ abstract class Orbislib_Abstract_ModelMapper
         }
     }
     
+    public function prepareToSave(OrbisLib_Abstract_Model $entry)
+    {
+        return $entry->toArrayStr();
+    }
+
     public function save(OrbisLib_Abstract_Model $entry)
     {
-        $data=$entry->toArray();
+        $data =  $this->prepareToSave($entry);
         $id = $entry->getId();
         if ($id === 0) {
             unset($data["id"]);
             return $this->getDbTable()->insert($data);
-        } else {
-            unset($data["created"]);
+        } else {            
+            unset($data["id"]);
             return $this->getDbTable()->update($data, array('id = ?' => $id));
         }
     }
