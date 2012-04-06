@@ -2,7 +2,7 @@
 abstract class Orbislib_Abstract_ModelMapper 
 {
         /**
-     * @var Application_Model_DbTable_Entry
+     * @var Zend_Db_Table_Abstract
      */
     protected $_dbTable;
 
@@ -20,6 +20,12 @@ abstract class Orbislib_Abstract_ModelMapper
     abstract public function getDbTableDefault();
             
 
+    /**
+     *
+     * @param Zend_Db_Table_Abstract|string $dbTable
+     * @return Zend_Db_Table_Abstract
+     * @throws UnexpectedValueException 
+     */
     public function setDbTable($dbTable)
     {
         if (is_string($dbTable)) {
@@ -62,21 +68,24 @@ abstract class Orbislib_Abstract_ModelMapper
     {
         $data =  $this->prepareToSave($entry);
         $id = $entry->id;
-        if ($id === 0) {
+        if ($id === 0 or (is_null($id))) {
             unset($data["id"]);
-            return $this->getDbTable()->insert($data);
+            $result = $this->getDbTable()->insert($data);
+            $id = $this->getDbTable()->getAdapter()->lastInsertId($this->getDbTable()->info(Zend_Db_Table_Abstract::NAME));
+            $entry->id = $id;
+            return $result;
         } else {            
             unset($data["id"]);
             return $this->getDbTable()->update($data, array('id = ?' => $id));
         }
     }
     
-    public function fetchAll($classOfEntrys)
+    public function fetchAll($classOfEntrys, $where = null)
     {
         if (!is_subclass_of($classOfEntrys, "OrbisLib_Abstract_Model")) {
             throw new UnexpectedValueException("Invalid class given");
         }
-        $resultSet = $this->getDbTable()->fetchAll();
+        $resultSet = $this->getDbTable()->fetchAll($where);
         $entries   = array();
         foreach ($resultSet as $row) {
             $entry = new $classOfEntrys();
