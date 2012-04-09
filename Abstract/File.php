@@ -18,7 +18,7 @@ abstract class OrbisLib_Abstract_File
      * @return string 
      */
     abstract public function getPublicDir();
-    
+
     public function __construct($path = NULL)
     {
         if (!is_null($path)) {
@@ -28,13 +28,13 @@ abstract class OrbisLib_Abstract_File
 
     public function getUri()
     {
-        return $this->getPublicDir()."/".$this->_path;
+        return $this->getPublicDir()."/".$this->getPath();
     }
     
     public function getFullPath($path = null)
     {
         if (is_null($path)) {
-            return $path = $this->_path;
+            $path = $this->getPath();
         }
         return $this->getLocalDir()."/".$path;
     }
@@ -56,16 +56,39 @@ abstract class OrbisLib_Abstract_File
 
     public function receive($remotePath, $localPath) 
     {   
+        $path = $localPath;
         $localPath = $this->getFullPath($localPath);
         if (!copy($remotePath, $localPath)) {
             throw  new Exception ("failed copy $remotePath to $localPath");
         }
+        $this->setPath($path);
         unlink($remotePath);        
     }
     
     public function toString()
     {
-        return (string) $this->_path;
+        return (string) $this->getPath();
+    }
+    
+    public function generateName($currName)
+    {
+        $ext = pathinfo($currName, PATHINFO_EXTENSION);
+        mt_srand();
+        $random = mt_rand();
+        return md5($currName.date("YmdHis").$random.__FILE__).".".$ext;
+    }
+    
+    public function delete()
+    {
+        if (is_null($this->getPath())) {
+            throw new Exception ("file not set");
+        } else {
+            if (file_exists($this->getFullPath())) {
+                return unlink($this->getFullPath());
+            }
+        }
+        $this->setPath(null);
+        return true;
     }
     
 }
