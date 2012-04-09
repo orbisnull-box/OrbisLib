@@ -151,6 +151,8 @@ abstract class OrbisLib_Abstract_Model
                     $vars[$name] = $this->$method;                                       
                 } elseif (method_exists($value, "toString")) {                
                      $vars[$name] = $value->toString();                    
+                } elseif ($value instanceof DateTime) {
+                    $vars[$name] = $value->format("Y-m-d H:i:s");
                 } else {
                     $vars[$name] = "Object ".get_class($value);                    
                 }                
