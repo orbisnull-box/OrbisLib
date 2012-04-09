@@ -10,13 +10,13 @@ abstract class OrbisLib_Abstract_Model
 
     public function setOptions(array $options)
     {
-        $dbVars = $this->_getDbVars();
+        $savedVars = $this->getSavedVars();
         foreach ($options as $key => $value) {
             $method = 'set' . ucfirst($key);
             if (method_exists($this, $method)) {
                 $this->$method($value);
             } else {
-                if (in_array($key, $dbVars)) {
+                if (in_array($key, $savedVars)) {
                     $varName = "_" . $key;
                     $this->$varName = $value;
                 } 
@@ -27,12 +27,12 @@ abstract class OrbisLib_Abstract_Model
 
     public function __set($name, $value)
     {
-        $dbVars = $this->_getDbVars();
+        $savedVars = $this->getSavedVars();
         $method = "set" . ucfirst($name);
         if (method_exists($this, $method)) {
             $this->$method($value);            
         } else {
-            if (in_array($name, $dbVars)) {
+            if (in_array($name, $savedVars)) {
                 $varName = "_".$name;
                 $this->$varName = $value;
             } else {
@@ -43,12 +43,12 @@ abstract class OrbisLib_Abstract_Model
 
     public function __get($name)
     {
-        $dbVars = $this->_getDbVars();
+        $savedVars = $this->getSavedVars();
         $method = "get" . ucfirst($name);
         if (method_exists($this, $method)) {
             return $this->$method();            
         } else {
-            if (in_array($name, $dbVars)) {
+            if (in_array($name, $savedVars)) {
                 $varName = "_".$name;
                 return $this->$varName;
             } else {
@@ -62,12 +62,12 @@ abstract class OrbisLib_Abstract_Model
     }
     
     protected function _getValue($name) {
-        $dbVars = $this->_getDbVars();  
+        $savedVars = $this->getSavedVars();  
         $method = "get" . ucfirst($name);
         if (method_exists($this, $method)) {
             return $this->$method();
         } else {
-            if (in_array($name, $dbVars)) {
+            if (in_array($name, $savedVars)) {
                 $varName = "_" . $name;
                 return $this->$varName;
             } else {
@@ -79,7 +79,7 @@ abstract class OrbisLib_Abstract_Model
 
     public function __call($name, $arguments)
     {
-        $dbVars = $this->_getDbVars();        
+        $savedVars = $this->getSavedVars();        
         if (strpos($name, "get")!==false) {
             $name = lcfirst(substr($name, 3));
             $varData = $this->_getValue($name);
@@ -94,7 +94,7 @@ abstract class OrbisLib_Abstract_Model
             if (method_exists($this, $method)) {
                 $this->$method($value);
             } else {
-                if (in_array($name, $dbVars)) {
+                if (in_array($name, $savedVars)) {
                     $varName = "_" . $name;
                     $this->$varName = $value;
                 } else {
@@ -115,7 +115,7 @@ abstract class OrbisLib_Abstract_Model
      * return array with names vars associeted with database
      * @return array
      */
-    protected function _getDbVars() {
+    public function getSavedVars() {
         $vars = array_keys(get_class_vars($this->getClass()));
         
         foreach ($vars as $key=>$value){
@@ -147,7 +147,7 @@ abstract class OrbisLib_Abstract_Model
         foreach ($vars as $name=>$value) {
             if (is_object($value)) {
                 $method = "get" . ucfirst($name)."ToString";
-                if (method_exists($this, "toString")){
+                if (method_exists($this, $method)){
                     $vars[$name] = $this->$method;                                       
                 } elseif (method_exists($value, "toString")) {                
                      $vars[$name] = $value->toString();                    
