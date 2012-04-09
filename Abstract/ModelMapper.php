@@ -101,4 +101,14 @@ abstract class Orbislib_Abstract_ModelMapper
         return $this->getDbTable()->delete($where);
     }
     
+    public function fetchAllPairs($classOfEntrys, $where = null)
+    {
+        $items = $this->fetchAll($classOfEntrys, $where);
+        $array = array();
+        foreach ($items as $item) {
+            $array[$item->id] = $item->name;
+        }
+        return $array;
+    }
+    
 }

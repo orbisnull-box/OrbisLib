@@ -1,0 +1,2 @@
+create Orbislib_Abstract_ModelMapper from Factory as singleton
+create repository (collections) for Fetch* methods with "eager loading"
