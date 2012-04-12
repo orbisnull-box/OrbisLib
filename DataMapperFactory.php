@@ -82,7 +82,8 @@ class OrbisLib_DataMapperFactory
     /**
      *
      * @param string $mapperClass
-     * @return object
+     * @return Orbislib_Abstract_ModelMapper
+     * @todo create mappers as singletons
      */
     public static function create($mapperClass)
     {
