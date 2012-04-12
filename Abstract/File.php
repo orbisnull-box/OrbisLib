@@ -26,9 +26,18 @@ abstract class OrbisLib_Abstract_File
         }
     }
 
-    public function getUri()
+    public function getUri($prefix = null)
     {
-        return $this->getPublicDir()."/".$this->getPath();
+        $uri = $this->getPath();
+        
+        if (!is_null($prefix)) {
+            $uri = $prefix.$uri;
+        }
+        
+        if (!is_null($this->getPublicDir())) {
+            $uri = $this->getPublicDir() ."/".$uri;
+        }
+        return $uri;
     }
     
     public function getFullPath($path = null)
@@ -75,7 +84,22 @@ abstract class OrbisLib_Abstract_File
         $ext = pathinfo($currName, PATHINFO_EXTENSION);
         mt_srand();
         $random = mt_rand();
-        return md5($currName.date("YmdHis").$random.__FILE__).".".$ext;
+        $name = md5($currName.date("YmdHis").$random.__FILE__).".".$ext;
+        return $name;
+    }
+    
+    public function generateDir()
+    {
+        $date = new DateTime();
+        $dir = $date->format("Y/m");
+        $fullDir = $this->getLocalDir();
+        $fullDir = $fullDir."/".$dir;
+        if (!file_exists($fullDir)) {
+            if(mkdir($fullDir, 0750, true)===false) {
+                throw new Exception ("Couldn't create dir \"$fullDir\"");
+            }            
+        }
+        return $dir;
     }
     
     public function delete()
