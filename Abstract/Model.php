@@ -172,4 +172,10 @@ abstract class OrbisLib_Abstract_Model
         }
         return $value;
     }
+    
+    public function setId($value)
+    {
+        $this->_id = (int)$value;
+        return $this;
+    }
 }
