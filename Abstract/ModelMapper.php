@@ -23,7 +23,7 @@ abstract class Orbislib_Abstract_ModelMapper
     /**
      *
      * @param Zend_Db_Table_Abstract|string $dbTable
-     * @return Zend_Db_Table_Abstract
+     * @return bool
      * @throws UnexpectedValueException 
      */
     public function setDbTable($dbTable)
@@ -39,6 +39,10 @@ abstract class Orbislib_Abstract_ModelMapper
         return true;
     }
 
+    /**
+     *
+     * @return Zend_Db_Table_Abstract
+     */
     public function getDbTable()
     {
         if (null === $this->_dbTable) {
@@ -110,5 +114,34 @@ abstract class Orbislib_Abstract_ModelMapper
         }
         return $array;
     }
+    
+    /**
+     *
+     * @return Zend_Db_Adapter_Abstract
+     */
+    public function getAdapter()
+    {
+        return $this->getDbTable()->getAdapter();
+    }
+    
+    public function getCount($where = null)
+    {
+        $select = $this->getAdapter()->select();
+        $select->from(array($this->getDbTable()->info("name")),
+                    array('count'=>"count(*)"));
+        
+        if (is_array($where)) {
+            foreach ($where as $item) {
+                $select->where($item);
+            }
+        } elseif (is_string($where)) {
+            $select->where($where);
+        } elseif (!is_null($where)) {
+            throw new InvalidArgumentException ("bad where");
+        }
+        
+        return (int) $select->query()->fetchColumn();
+    }
+
     
 }
